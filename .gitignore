@@ -1,0 +1,7 @@
+server
+webclient
+map
+venv
+data
+.idea
+.mypy_cache
