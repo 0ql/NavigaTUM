@@ -9,6 +9,10 @@ spec:
   commonName: {{ .Values.url }}
   dnsNames:
     - {{ .Values.url }}
+    {{ if eq "nav.tum.sexy" .Values.url }}
+    - nav.tum.app
+    - nav.tum.de
+    {{ end }}
   secretName: {{ .Values.url }}
   issuerRef:
     name: letsencrypt-production
