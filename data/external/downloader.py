@@ -113,6 +113,7 @@ def roomfinder_rooms():
             print(".", end="", flush=True)
     print("")
 
+    rooms.sort(key=lambda r: r["r_id"])
     _write_cache_json(cache_name, rooms)
     return rooms
 
@@ -173,6 +174,7 @@ def roomfinder_maps():
                 else:
                     used_maps[_map[1]] = ("building", building_entity["b_id"], _map)
     maps = _download_maps(used_maps)
+    maps.sort(key=lambda m: m["id"])
 
     # Not all maps are used somewhere.
     # TODO: Download the rest
@@ -359,6 +361,7 @@ def tumonline_rooms():
             rooms.append(room_index[room["roomcode"]])
         usage_id += 1
 
+    rooms.sort(key=lambda r: r["list_index"])
     _write_cache_json(cache_name, rooms)
     return rooms
 
