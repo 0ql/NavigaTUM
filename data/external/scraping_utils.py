@@ -1,6 +1,8 @@
 import json
 import time
+import urllib.request
 from pathlib import Path
+from urllib.error import HTTPError
 
 CACHE_PATH = Path(__file__).parent / "cache"
 
@@ -15,7 +17,7 @@ def maybe_sleep(duration):
 
 def _write_cache_json(fname, data):
     with open(CACHE_PATH / fname, "w", encoding="utf-8") as file:
-        json.dump(data, file)
+        json.dump(data, file, indent=4)
 
 
 def _cached_json(fname):
@@ -24,3 +26,19 @@ def _cached_json(fname):
         with open(path, encoding="utf-8") as file:
             return json.load(file)
     return None
+
+
+def _download_file(url, target_cache_file, quiet=False):
+    if not target_cache_file.exists():
+        msg = f"Retrieving: '{url}'"
+        # url parameter does not allow path traversal, because we build it further up in the callstack
+        try:
+            urllib.request.urlretrieve(url, target_cache_file)  # nosec: B310
+        except HTTPError as e:
+            if not quiet:
+                print(f"{msg} -> Failed to retrieve {url}: {e}")
+            return None
+        if not quiet:
+            print(msg)
+
+    return target_cache_file

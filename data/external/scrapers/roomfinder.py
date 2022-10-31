@@ -1,14 +1,13 @@
 # This script takes care of downloading data from the Roomfinder and TUMonline
 # and caching the results
 import string
-import urllib
+import urllib.parse
 import xmlrpc.client
 import zipfile
 
 from defusedxml import ElementTree as ET
+from external.scraping_utils import _cached_json, _download_file, _write_cache_json, CACHE_PATH, maybe_sleep
 from progress.bar import Bar  # type: ignore
-
-from external.scraping_utils import maybe_sleep, _write_cache_json, _cached_json, CACHE_PATH
 from utils import convert_to_webp
 
 ROOMFINDER_API_URL = "http://roomfinder.ze.tum.de:8192"
@@ -222,12 +221,3 @@ def _download_map(_map, e_id, e_type):
         url = f"{base_url}?b_id={e_id}&mapid={_map[1]}"
         return _download_file(url, filepath)
     raise RuntimeError(f"Unknown entity type: {e_type}")
-
-
-def _download_file(url, target_cache_file):
-    if not target_cache_file.exists():
-        print(f"Retrieving: '{url}'")
-        # url parameter does not allow path traversal, because we build it further up in the callstack
-        urllib.request.urlretrieve(url, target_cache_file)  # nosec: B310
-
-    return target_cache_file
